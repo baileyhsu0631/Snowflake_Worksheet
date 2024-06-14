@@ -37,6 +37,13 @@ def main(session: snowpark.Session):
     def map_class(x: int) -> str:
         class_dic={1:'First Class', 2:'Second Class', 3:'Economy'}
         return class_dic[x]
-    
+
+    removed_column_data = removed_column_data.withColumn('new', map_class(col('PCLASS')))
+
+
+    # saving the transformed data to a snowflake table
+    removed_column_data.write.mode('overwrite').save_as_table('Titanic_Passenger_Final_Data')
+    table_data = session.sql("""select * from Titanic_Passenger_Final_Data""")
+    return  table_data
  
-    return  removed_column_data.withColumn('new', map_class(col('PCLASS')))
+     
